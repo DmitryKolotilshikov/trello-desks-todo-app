@@ -1,0 +1,53 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgb(255, 252, 249);
+    background: radial-gradient(
+        circle,
+        rgba(255, 252, 249, 1) 60%,
+        rgba(233, 238, 231, 1) 100%
+    );
+    overflow: hidden;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.loader,
+.error {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.399);
+    justify-content: center;
+    align-items: center;
+    color: var(--main-color-white);
+    font-size: var(--font-sz-5);
+}
+
+.error {
+    color: var(--main-color-red);
+    font-size: var(--font-sz-4);
+}
+
+.toggle {
+    display: flex;
+}
+
+
+@media (max-width: 1110px) {
+    body {
+        overflow-y: scroll;
+    }
+}

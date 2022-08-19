@@ -1,0 +1,58 @@
+.todo {
+    border: 1px solid var(--main-color-dark);
+    border-radius: 10px;
+    padding: .8em;
+    display: flex;
+    flex-direction: column;
+    gap: 1.3em;
+    background-color: var(--main-color-light);
+}
+
+.todo__header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1em;
+}
+
+.todo__title {
+    font-size: var(--font-sz-3);
+    font-weight: 700;
+}
+
+.todo__btn-edit,
+.todo__btn-back {
+    margin-left: auto;
+}
+.todo__btn-remove {}
+
+.btn--remove-done {
+    margin-left: auto;
+}
+
+
+.todo__desc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.todo__desc-content {
+}
+
+.todo__btn-move {
+}
+
+.todo__user {
+    font-size: var(--font-sz-2);
+    font-weight: 400;
+    font-style: italic;
+}
+
+.todo--done {
+    background-color: var(--main-color-purple);
+}
+
+.todo--in-progress {
+    background-color: var(--main-color-grey);
+}

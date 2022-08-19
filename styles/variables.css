@@ -1,0 +1,22 @@
+:root {
+    --main-color-dark: #99A799;
+    --main-color-medium: #ADC2A9;
+    --main-color-light: #D3E4CD;
+    --main-color-cream: #FEF5ED;
+    --main-color-purple: #D9D7F1;
+    --main-color-grey: rgb(242, 242, 242);
+    --main-color-white: #fff;
+    --main-color-black: rgb(23, 23, 23);
+    --main-color-coral: #FF7878;
+    --main-color-red: rgb(213, 0, 0);
+
+    --font-sz-1: .6rem;
+    --font-sz-2: .8rem;
+    --font-sz-3: 1rem;
+    --font-sz-4: 1.2rem;
+    --font-sz-5: 1.5rem;
+    --font-sz-6: 1.7rem;
+    --font-sz-7: 2rem;
+
+    --shadow-1: 0 2px 3px rgba(0, 0, 0, 0.303);
+}

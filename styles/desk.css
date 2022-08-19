@@ -1,0 +1,93 @@
+.desks {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2em;
+    padding: 1em;
+}
+
+.desk {
+    width: 350px;
+    height: 600px;
+    border-radius: 10px;
+    background-color: var(--main-color-white);
+    box-shadow: var(--shadow-1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.desk__header {
+    height: 50px;
+    padding: 1em 1.5em;
+    display: flex;
+    justify-content: space-between;
+    color: var(--main-color-white);
+    background-color: var(--main-color-medium);
+}
+
+.desk__header-title {
+    text-transform: uppercase;
+    text-shadow: var(--shadow-1);
+}
+
+.desk__header-count {
+    text-shadow: var(--shadow-1);
+}
+
+.desc__todo-content {
+    overflow-y: auto;
+    height: 500px;
+    padding: 1em 0.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.desk__btn-add,
+.desk__btn-remove-all {
+    height: 50px;
+    border: none;
+    outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--font-sz-4);
+    color: var(--main-color-white);
+    background-color: var(--main-color-medium);
+    cursor: pointer;
+}
+
+.desk__btn-add:hover,
+.desk__btn-remove-all:hover {
+    opacity: 0.85;
+}
+
+.desk--progress {
+    justify-content: flex-start;
+}
+
+.header--in-progress {
+    color: var(--main-color-black);
+    background-color: var(--main-color-grey);
+}
+
+.header--done {
+    color: var(--main-color-black);
+    background-color: var(--main-color-purple);
+}
+
+.bg--coral {
+    background-color: var(--main-color-coral);
+}
+
+@media (max-width: 1280px) {
+    .desk {
+        width: 300px;
+    }
+}
