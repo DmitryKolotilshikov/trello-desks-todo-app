@@ -1,4 +1,4 @@
-import { addLoadingLayout, removeLoadingLayout } from "./utils.js";
+import { Modal } from "./Modal.js";
 
 export class API {
     static route = 'https://62d4f182cd960e45d45df2e7.mockapi.io/users/';
@@ -11,12 +11,12 @@ export class API {
     }
 
     static async getUser(id) {
-        addLoadingLayout();
+        Modal.addLoading();
 
         const res = await fetch(this.route + id);
         const user = await res.json();
 
-        setTimeout(() => removeLoadingLayout(), 400);
+        setTimeout(() => Modal.removeLoading(), 700);
 
         return user;
     }
@@ -34,7 +34,6 @@ export class API {
         const res = await fetch(this.route + id, options);
         const user = await res.json();
 
-        console.log(user);
         return user;
     }
 }

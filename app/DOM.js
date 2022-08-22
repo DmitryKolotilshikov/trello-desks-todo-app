@@ -28,9 +28,13 @@ export class DOM {
         this.$el.innerHTML = '';
     }
 
-    addClass(className) {
-        if (className) {
-            this.$el.classList.add(className);
+    remove() {
+        this.$el.remove();
+    }
+
+    addClass(...classNames) {
+        if (classNames.length) {
+            this.$el.classList.add(...classNames);
         }
     }
 
@@ -56,6 +60,14 @@ export class DOM {
 
     insertHTML(place, html) {
         this.$el.insertAdjacentHTML(place, html);
+        return this;
+    }
+
+    insertElement(place, element) {
+        if (element instanceof DOM) {
+            element = element.$el;
+        }
+        this.$el.insertAdjacentElement(place, element);
         return this;
     }
 
