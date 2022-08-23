@@ -2,10 +2,10 @@
 export const $ = (el) => new DOM(el);
 
 export class DOM {
-    static create(tagName, classes = '') {
+    static create(tagName, ...classes) {
         const el = document.createElement(tagName);
-        if (classes) {
-            el.classList.add(classes);
+        if (classes.length) {
+            el.classList.add(...classes);
         }
         return $(el);
     }

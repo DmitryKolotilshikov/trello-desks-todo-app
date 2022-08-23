@@ -1,5 +1,6 @@
 import { API } from './API.js';
 import { $ } from './DOM.js';
+import { Modal } from './Modal.js';
 import { addTodoContent } from './utils/common.utils.js';
 import { moveError, putError, removeError } from './constants.js';
 import {
@@ -35,6 +36,11 @@ export class TodoLogic {
         const btnRemove = todoFragment.find('[data-todo-btn-remove]');
         btnRemove.addEvent('click', () => {
             this.removeTodo('create', todo);
+        });
+
+        const btnEdit = todoFragment.find('[data-todo-btn-edit]');
+        btnEdit.addEvent('click', () => {
+            Modal.addTodoLayout(this.editTodoLogic.bind(this), 'edit', todo);
         });
 
         createDesk.append(todoFragment);
@@ -133,6 +139,41 @@ export class TodoLogic {
             () => API.putUser(this.currentUser.id, newUserData),
             removeError,
             this.appendTodos.bind(this)
+        )
+    }
+
+    addTodoLogic(title, desc, id) {
+        const newTodo = {title, desc, id}
+        const newTodos = { ...this.todos, create: [...this.todos.create, newTodo] };
+        const newUserData = { ...this.currentUser, todos: newTodos };
+
+        this.fetcher(
+            () => API.putUser(this.currentUser.id, newUserData),
+            removeError,
+            this.appendTodos.bind(this),
+        )
+    };
+
+    addTodo() {
+        Modal.addTodoLayout(this.addTodoLogic.bind(this));
+    }
+
+    editTodoLogic(title, desc, id) {
+        const newTodo = {title, desc, id};
+        const newCreateTodos = this.todos.create.map(el => {
+            if (el.id === id) {
+                return newTodo;
+            }
+            return el;
+        });
+
+        const newTodos = { ...this.todos, create: newCreateTodos };
+        const newUserData = { ...this.currentUser, todos: newTodos };
+
+        this.fetcher(
+            () => API.putUser(this.currentUser.id, newUserData),
+            removeError,
+            this.appendTodos.bind(this),
         )
     }
 

@@ -1,15 +1,15 @@
-import { $ } from "./DOM.js";
+import { $, DOM } from "./DOM.js";
 import { root } from "./elements.js";
 
 export class Modal {
     static #loaderLayout;
     static #errorLayout;
+    static #addTodoLayout;
 
     static addLoading() {
         Modal.removeError();
 
-        const modalLoading = $(document.createElement('div'));
-        modalLoading.addClass('modal', 'modal--toggle');
+        const modalLoading = DOM.create('div', 'modal', 'modal--toggle');
         modalLoading.$el.dataset.loader = '';
 
         modalLoading.insertHTML('afterbegin', `
@@ -43,8 +43,7 @@ export class Modal {
     static addError(message) {
         Modal.removeLoading();
 
-        const modalError = $(document.createElement('div'));
-        modalError.addClass('modal', 'error', 'modal--toggle');
+        const modalError = DOM.create('div', 'modal', 'error', 'modal--toggle');
         modalError.$el.dataset.error = '';
         modalError.insertHTML('afterbegin', `<p>${message}</p>`);
         root.insertElement('afterend', modalError);
@@ -63,5 +62,67 @@ export class Modal {
             Modal.#errorLayout.remove();
             Modal.#errorLayout = '';
         }
+    }
+
+    static addTodoLayout(callback, type = 'add', todo = null) {
+        const modalNewTodo = DOM.create('div', 'modal', 'modal--toggle');
+        const formNewTodo = DOM.create('form', 'modal__new-todo');
+
+        formNewTodo.insertHTML('afterbegin', `
+            <h3 class="new-todo__header">${type === 'add' ? 'New Todo' : 'Edit Todo'}</h3>
+            <input 
+                required
+                type="text" 
+                placeholder="title"
+                class="new-todo__title"
+                value="${todo ? todo.title : ''}"
+            >
+            <textarea 
+                required
+                rows="3" 
+                minlength="3"
+                maxlength="42" 
+                placeholder="todo description"
+                class="new-todo__description"
+            >${todo ? todo.desc : ''}</textarea>
+            <div class="new-todo__buttons">
+                <button 
+                    type="button" 
+                    class="new-todo__cancel" 
+                    data-btn-cancel-new-todo
+                >Cancel</button>
+                <button 
+                    type="submit" 
+                    class="new-todo__add" 
+                    data-btn-add-new-todo
+                >${type === 'add' ? 'Add Todo' : 'Edit Todo'}</button>
+            </div>
+        `);
+
+        modalNewTodo.insertElement('afterbegin', formNewTodo);
+        root.insertElement('afterend', modalNewTodo);
+
+        Modal.#addTodoLayout = modalNewTodo;
+
+        const closeModal = () => {
+            if (Modal.#addTodoLayout) {
+                Modal.#addTodoLayout.remove();
+                Modal.#addTodoLayout = '';
+            }
+        }
+
+        modalNewTodo.addEvent('click', (e) => {
+            if ('btnCancelNewTodo' in e.target.dataset) {
+                closeModal();
+            }
+        })
+
+        formNewTodo.addEvent('submit', (e) => {
+            e.preventDefault();
+            const id = todo ? todo.id : Date.now();
+
+            callback(e.target[0].value, e.target[1].value, id);
+            closeModal();
+        })
     }
 }

@@ -11,6 +11,7 @@ const deskCreateCount = $('[data-desk-create-count]');
 const deskProgressCount = $('[data-desk-progress-count]');
 const deskDoneCount = $('[data-desk-done-count]');
 const btnRemoveAll = $('[data-btn-remove-all]');
+const btnAddTodo = $('[data-btn-add-todo]');
 
 export {
     root,
@@ -23,5 +24,6 @@ export {
     deskCreateCount,
     deskProgressCount,
     deskDoneCount,
-    btnRemoveAll
+    btnRemoveAll,
+    btnAddTodo
 }

@@ -5,7 +5,8 @@ import { getError } from './constants.js';
 import { clearDesks } from './utils/common.utils.js';
 import {
     createDesk, progressDesk, doneDesk, btnRemoveAll,
-    deskCreateCount, deskDoneCount, deskProgressCount
+    deskCreateCount, deskDoneCount, deskProgressCount,
+    btnAddTodo
 } from './elements.js';
 
 
@@ -14,12 +15,16 @@ export class Todo extends User {
         super(userId);
     }
 
-    appendTodos(user) {
-        this.$logic = new TodoLogic(
+    todoLogic() {
+        return new TodoLogic(
             this.currentUser,
             this.fetcher.bind(this),
             this.appendTodos.bind(this)
-        );
+        )
+    }
+
+    appendTodos(user) {
+        const $logic = this.todoLogic();
 
         clearDesks(createDesk, progressDesk, doneDesk);
 
@@ -30,15 +35,15 @@ export class Todo extends User {
         const todos = user.todos;
 
         todos.create.forEach((el) => {
-            this.$logic.createInitialTodo(el, user);
+            $logic.createInitialTodo(el, user);
         });
 
         todos.progress.forEach((el) => {
-            this.$logic.createProgressTodo(el, user);
+            $logic.createProgressTodo(el, user);
         });
 
         todos.done.forEach((el) => {
-            this.$logic.createDoneTodo(el, user);
+            $logic.createDoneTodo(el, user);
         });
     }
 
@@ -59,12 +64,11 @@ export class Todo extends User {
         );
 
         btnRemoveAll.addEvent('click', () => {
-            this.$logic = new TodoLogic(
-                this.currentUser,
-                this.fetcher.bind(this),
-                this.appendTodos.bind(this)
-            );
-            this.$logic.removeAll();
+            this.todoLogic().removeAll();
         });
+
+        btnAddTodo.addEvent('click', () => {
+            this.todoLogic().addTodo();
+        })
     }
 }
