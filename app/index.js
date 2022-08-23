@@ -1,3 +1,3 @@
-import { Todo } from './Todo.js';
+import { Desk } from './Desk.js';
 
-new Todo(1).initialRender();
+new Desk(1).initialRender();

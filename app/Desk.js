@@ -10,7 +10,7 @@ import {
 } from './elements.js';
 
 
-export class Todo extends User {
+export class Desk extends User {
     constructor(userId) {
         super(userId);
     }
