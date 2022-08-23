@@ -30,6 +30,11 @@ export class TodoLogic {
         const btnMove = todoFragment.find('[data-todo-btn-move]');
 
         btnMove.addEvent('click', () => {
+            const limit = 4;
+            if (this.todos.progress.length >= limit) {
+                Modal.addWarningLayout(`You cannot add more than ${limit} todos to Inprogress desk`);
+                return;
+            }
             this.moveTodo('create', todo);
         });
 
@@ -179,14 +184,18 @@ export class TodoLogic {
 
     removeAll() {
         if (this.todos.done.length) {
-            const newTodos = { ...this.todos, done: [] };
-            const newUserData = { ...this.currentUser, todos: newTodos };
+            const remove = () => {
+                const newTodos = { ...this.todos, done: [] };
+                const newUserData = { ...this.currentUser, todos: newTodos };
+                
+                this.fetcher(
+                    () => API.putUser(this.currentUser.id, newUserData),
+                    removeError,
+                    this.appendTodos.bind(this),
+                    );
+            }
 
-            this.fetcher(
-                () => API.putUser(this.currentUser.id, newUserData),
-                removeError,
-                this.appendTodos.bind(this),
-            )
+            Modal.addWarningLayout(`Are you sure?`, 'confirm', remove.bind(this));
         }
     }
 }

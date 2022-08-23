@@ -25,7 +25,20 @@
 }
 .new-todo__buttons {
 }
-.new-todo__cancel {
-}
+.new-todo__cancel,
 .new-todo__add {
+    padding: 0.5em 1em;
+    border: none;
+    font-size: var(--font-sz-3);
+    background-color: var(--main-color-coral);
+    cursor: pointer;
+}
+
+.new-todo__add {
+    background-color: var(--main-color-medium);
+}
+
+.new-todo__cancel:hover,
+.new-todo__add:hover {
+    opacity: .8;
 }

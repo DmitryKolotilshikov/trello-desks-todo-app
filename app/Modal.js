@@ -5,6 +5,7 @@ export class Modal {
     static #loaderLayout;
     static #errorLayout;
     static #addTodoLayout;
+    static #warningLayout;
 
     static addLoading() {
         Modal.removeError();
@@ -125,4 +126,52 @@ export class Modal {
             closeModal();
         })
     }
+
+
+    static addWarningLayout(text = '', type = 'info', callback) {
+        const modalWarning = DOM.create('div', 'modal', 'modal--toggle');
+        modalWarning.insertHTML('afterbegin', `
+            <div class="modal__warning">
+                <h3>${text ? text : 'Warning'}</h3>
+                <div class="modal__warning-buttons">
+                    ${
+                        type !== 'info' 
+                            ? `<button 
+                                    type="button" 
+                                    data-btn-warning-cancel
+                                    class="warning-buttons__cancel"
+                                >Cancel</button>`
+                            : ''
+                    }
+                    <button 
+                        type="button" 
+                        data-btn-warning-confirm
+                        class="warning-buttons__confirm"
+                    >Confirm</button>
+                </div>
+            </div>
+        `);
+
+        root.insertElement('afterend', modalWarning);
+
+        Modal.#warningLayout = modalWarning;
+
+        const removeWarning = () => {
+            if (Modal.#warningLayout) {
+                Modal.#warningLayout.remove();
+                Modal.#warningLayout = '';
+            }
+        }
+
+        modalWarning.addEvent('click', (e) => {
+            if ('btnWarningCancel' in e.target.dataset) {
+                removeWarning();
+                return;
+            }
+            if ('btnWarningConfirm' in e.target.dataset) {
+                removeWarning();
+                if (callback) callback();
+            }
+        })
+    };
 }
