@@ -19,8 +19,8 @@
     <div id="root">
 
         <header class="header">
-            <div class="logo">Todo Desks</div>
-            <div class="clock">09:37</div>
+            <div class="header__logo">Todo Desks</div>
+            <div class="header__clock" data-header-clock></div>
         </header>
 
         <main>
@@ -81,7 +81,10 @@
                 <button class="todo__btn-move" data-todo-btn-move>➡</button>
             </div>
 
-            <div class="todo__user" data-todo-user>User</div>
+            <div class="todo__info">
+                <div class="todo__user" data-todo-user>User</div>
+                <div class="todo__date" data-todo-date></div>
+            </div>
         </div>
     </template>
 
@@ -98,7 +101,10 @@
                 <button class="todo__btn-move" data-todo-btn-move>➡</button>
             </div>
 
-            <div class="todo__user" data-todo-user>User</div>
+            <div class="todo__info">
+                <div class="todo__user" data-todo-user>User</div>
+                <div class="todo__date" data-todo-date></div>
+            </div>
         </div>
     </template>
 
@@ -113,7 +119,10 @@
                 <span class="todo__desc-content" data-todo-desc-content>Description</span>
             </div>
 
-            <div class="todo__user" data-todo-user>User</div>
+            <div class="todo__info">
+                <div class="todo__user" data-todo-user>User</div>
+                <div class="todo__date" data-todo-date></div>
+            </div>
         </div>
     </template>
 </body>

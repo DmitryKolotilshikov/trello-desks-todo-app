@@ -7,6 +7,9 @@ export const addTodoContent = (fragment, todo, user) => {
 
     const todoUser = fragment.find('[data-todo-user]');
     todoUser.text(user.name);
+
+    const todoDate = fragment.find('[data-todo-date]');
+    todoDate.text(todo.date);
 };
 
 export const clearDesks = (...desks) => {

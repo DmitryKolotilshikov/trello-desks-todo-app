@@ -11,13 +11,13 @@
     box-shadow: var(--shadow-1);
 }
 
-.logo {
+.header__logo {
     color: var(--main-color-white);
     font-size: var(--font-sz-5);
     text-shadow: var(--shadow-1);
 }
 
-.clock {
+.header__clock {
     width: 150px;
     height: 50px;
     padding: .5em;

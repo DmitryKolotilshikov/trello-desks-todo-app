@@ -2,7 +2,7 @@ import { User } from './User.js';
 import { API } from './API.js';
 import { TodoLogic } from './TodoLogic.js';
 import { getError } from './constants.js';
-import { clearDesks } from './utils/common.utils.js';
+import { clearDesks } from './utils/todos.utils.js';
 import {
     createDesk, progressDesk, doneDesk, btnRemoveAll,
     deskCreateCount, deskDoneCount, deskProgressCount,
@@ -34,17 +34,29 @@ export class Desk extends User {
 
         const todos = user.todos;
 
-        todos.create.forEach((el) => {
-            $logic.createInitialTodo(el, user);
-        });
+        if (todos.create?.length) {
+            todos.create.forEach((el) => {
+                $logic.createInitialTodo(el, user);
+            });
+        } else {
+            $logic.noTodosInfo(createDesk)
+        }
 
-        todos.progress.forEach((el) => {
-            $logic.createProgressTodo(el, user);
-        });
+        if (todos.progress?.length) {
+            todos.progress.forEach((el) => {
+                $logic.createProgressTodo(el, user);
+            });
+        } else {
+            $logic.noTodosInfo(progressDesk)
+        }
 
-        todos.done.forEach((el) => {
-            $logic.createDoneTodo(el, user);
-        });
+        if (todos.done?.length) {
+            todos.done.forEach((el) => {
+                $logic.createDoneTodo(el, user);
+            });
+        } else {
+            $logic.noTodosInfo(doneDesk)
+        }
     }
 
     onChangeCallback() {
@@ -69,6 +81,6 @@ export class Desk extends User {
 
         btnAddTodo.addEvent('click', () => {
             this.todoLogic().addTodo();
-        })
+        });
     }
 }

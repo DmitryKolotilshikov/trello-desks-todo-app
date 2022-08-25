@@ -12,6 +12,7 @@ const deskProgressCount = $('[data-desk-progress-count]');
 const deskDoneCount = $('[data-desk-done-count]');
 const btnRemoveAll = $('[data-btn-remove-all]');
 const btnAddTodo = $('[data-btn-add-todo]');
+const clockLayout = $('[data-header-clock]');
 
 export {
     root,
@@ -25,5 +26,6 @@ export {
     deskProgressCount,
     deskDoneCount,
     btnRemoveAll,
-    btnAddTodo
+    btnAddTodo,
+    clockLayout
 }

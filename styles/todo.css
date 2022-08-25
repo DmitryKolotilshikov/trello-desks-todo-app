@@ -43,7 +43,14 @@
 .todo__btn-move {
 }
 
-.todo__user {
+.todo__info {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.todo__user,
+.todo__date {
     font-size: var(--font-sz-2);
     font-weight: 400;
     font-style: italic;

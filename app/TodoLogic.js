@@ -1,8 +1,12 @@
 import { API } from './API.js';
 import { $ } from './DOM.js';
 import { Modal } from './Modal.js';
-import { addTodoContent } from './utils/common.utils.js';
-import { moveError, putError, removeError } from './constants.js';
+import { addTodoContent } from './utils/todos.utils.js';
+import { setTodoDate } from './utils/date.util.js';
+import { 
+    addLimitTodos, progressLimitTodos,
+    moveError, putError, removeError,
+} from './constants.js';
 import {
     createTodoTemplate, progressTodoTemplate, doneTodoTemplate,
     createDesk, progressDesk, doneDesk
@@ -30,9 +34,10 @@ export class TodoLogic {
         const btnMove = todoFragment.find('[data-todo-btn-move]');
 
         btnMove.addEvent('click', () => {
-            const limit = 4;
-            if (this.todos.progress.length >= limit) {
-                Modal.addWarningLayout(`You cannot add more than ${limit} todos to Inprogress desk`);
+            if (this.todos.progress.length >= progressLimitTodos) {
+                Modal.addWarningLayout(
+                    `You cannot add more than ${progressLimitTodos} todos to Inprogress desk`
+                );
                 return;
             }
             this.moveTodo('create', todo);
@@ -148,7 +153,7 @@ export class TodoLogic {
     }
 
     addTodoLogic(title, desc, id) {
-        const newTodo = {title, desc, id}
+        const newTodo = { title, desc, id, date: setTodoDate() }
         const newTodos = { ...this.todos, create: [...this.todos.create, newTodo] };
         const newUserData = { ...this.currentUser, todos: newTodos };
 
@@ -160,11 +165,16 @@ export class TodoLogic {
     };
 
     addTodo() {
+        if (this.todos.create?.length >= addLimitTodos) {
+            Modal.addWarningLayout(`You cannot add more than ${addLimitTodos} todos`);
+            return;
+        }
+
         Modal.addTodoLayout(this.addTodoLogic.bind(this));
     }
 
     editTodoLogic(title, desc, id) {
-        const newTodo = {title, desc, id};
+        const newTodo = { title, desc, id, date: setTodoDate() };
         const newCreateTodos = this.todos.create.map(el => {
             if (el.id === id) {
                 return newTodo;
@@ -187,15 +197,21 @@ export class TodoLogic {
             const remove = () => {
                 const newTodos = { ...this.todos, done: [] };
                 const newUserData = { ...this.currentUser, todos: newTodos };
-                
+
                 this.fetcher(
                     () => API.putUser(this.currentUser.id, newUserData),
                     removeError,
                     this.appendTodos.bind(this),
-                    );
+                );
             }
 
             Modal.addWarningLayout(`Are you sure?`, 'confirm', remove.bind(this));
         }
+    }
+
+    noTodosInfo(desk) {
+        desk.insertHTML('afterbegin', `
+            <p>No todos yet...</p>
+        `)
     }
 }

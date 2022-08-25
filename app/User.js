@@ -42,6 +42,7 @@ export class User {
             this.currentUser = await cb();
             this.todos = this.currentUser.todos;
             appendTodos(this.currentUser);
+
             if (onChangeCallback) {
                 this.onChange(onChangeCallback);
             }
