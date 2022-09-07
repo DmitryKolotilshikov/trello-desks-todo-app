@@ -1,47 +1,52 @@
 import { Modal } from "./Modal.js";
 
 export class API {
-    static route = 'https://62d4f182cd960e45d45df2e7.mockapi.io/users/';
+    static #route = 'https://62d4f182cd960e45d45df2e7.mockapi.io/todos/';
 
     static async getUsers() {
-        const response = await fetch(this.route);
+        const response = await fetch(API.#route);
         if (response.ok) {
-            const users = await response.json();
-            return users;
+            const todos = await response.json();
+            return todos;
         } else {
             throw new Error(response.statusText);
         }
     }
 
     static async getUser(id) {
-        Modal.addLoading();
+        Modal.addLoaderLayout();
 
-        const response = await fetch(this.route + id);
-
+        const response = await fetch(API.#route + id);
         if (response.ok) {
             const user = await response.json();
-            setTimeout(() => Modal.removeLoading(), 700);
+            setTimeout(Modal.removeLoaderLayout, 1000);
+
             return user;
         } else {
             throw new Error(response.statusText);
         }
-      }
+    }
 
-    static async putUser(id, body) {
+    static async putUser(id, body, isLoader = false) {
         const bodyContent = JSON.stringify(body);
+
         const headersList = {
             "Content-Type": "application/json"
-        };
+        }
+
         const options = {
-            method: "PUT",
+            method: 'PUT',
             body: bodyContent,
             headers: headersList
         }
 
-        const response = await fetch(this.route + id, options);
+        if (isLoader) Modal.addLoaderLayout();
+
+        const response = await fetch(API.#route + id, options);
 
         if (response.ok) {
             const user = await response.json();
+            if (isLoader) setTimeout(Modal.removeLoaderLayout, 200);
             return user;
         } else {
             throw new Error(response.statusText);

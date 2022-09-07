@@ -1,177 +1,264 @@
-import { DOM } from "./DOM.js";
-import { root } from "./elements.js";
+import { DOM } from './DOM.js';
+import { root } from './elements.js';
+import { getDate } from './utils/date.utils.js';
 
 export class Modal {
-    static #loaderLayout;
     static #errorLayout;
-    static #addTodoLayout;
-    static #warningLayout;
+    static #loader;
+    static #warningModal;
+    static #newTodoLayout;
+    static #usersForm;
 
-    static addLoading() {
-        Modal.removeError();
-
-        const modalLoading = DOM.create('div', 'modal', 'modal--toggle');
-        modalLoading.$el.dataset.loader = '';
-
-        modalLoading.insertHTML('afterbegin', `
-            <div class="lds-spinner">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
+    static addLoaderLayout() {
+        const loaderLayout = DOM.create('div', 'modal', 'modal--toggle');
+        loaderLayout.insertHTML('afterbegin', `
+            <div class="lds-roller">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         `);
+        Modal.#loader = loaderLayout;
 
-        Modal.#loaderLayout = modalLoading;
-        root.insertElement('afterend', modalLoading);
+        root.insertElement('afterend', loaderLayout);
     }
 
-    static removeLoading() {
-        if (Modal.#loaderLayout) {
-            Modal.#loaderLayout.remove();
-            Modal.#loaderLayout = '';
+    static removeLoaderLayout() {
+        if (Modal.#loader) {
+            Modal.#loader.remove();
         }
     }
 
-    static addError(message) {
-        Modal.removeLoading();
+    static addErrorLayout(message) {
+        this.removeLoaderLayout();
 
-        const modalError = DOM.create('div', 'modal', 'error', 'modal--toggle');
-        modalError.$el.dataset.error = '';
-        modalError.insertHTML('afterbegin', `<p>${message}</p>`);
-        root.insertElement('afterend', modalError);
+        const errorElement = DOM.create('div', 'modal', 'error', 'modal--toggle');
+        errorElement.insertHTML('afterbegin', `<p data-error-message>${message}</p>`);
+        Modal.#errorLayout = errorElement;
 
-        Modal.#errorLayout = modalError;
+        root.insertElement('afterend', errorElement);
 
-        modalError.addEvent('click', (e) => {
-            if (e.target.classList.contains('modal--toggle')) {
-                Modal.removeError();
-            }
+        errorElement.addEvent('click', (e) => {
+            if ('errorMessage' in e.target.dataset) return;
+            Modal.#errorLayout.remove();
         });
     }
 
-    static removeError() {
-        if (Modal.#errorLayout) {
-            Modal.#errorLayout.remove();
-            Modal.#errorLayout = '';
+    static addWarningRemoveLayout(callback) {
+        const warningElement = DOM.create('div', 'modal', 'modal--toggle');
+        warningElement.insertHTML('afterbegin', `
+            <div class="modal__warning">
+                <h3>Are you sure?</h3>
+                <div>
+                    <button 
+                        class="warning-buttons__cancel"
+                        data-btn-cancel
+                    >Cancel</button>
+
+                    <button 
+                    class="warning-buttons__confirm"
+                    data-btn-confirm
+                    >Confirm</button>
+                </div>
+            </div>
+        `);
+        Modal.#warningModal = warningElement;
+
+        warningElement.addEvent('click', (e) => {
+            const $el = e.target;
+
+            if ('btnCancel' in $el.dataset) {
+                this.removeWarningLayout();
+                return;
+            }
+            if ('btnConfirm' in $el.dataset) {
+                callback();
+                this.removeWarningLayout();
+            }
+        })
+
+        root.insertElement('afterend', warningElement);
+    }
+
+    static removeWarningLayout() {
+        if (Modal.#warningModal) {
+            Modal.#warningModal.remove();
         }
     }
 
-    static addTodoLayout(callback, type = 'add', todo = null) {
-        const modalNewTodo = DOM.create('div', 'modal', 'modal--toggle');
+    static addWarningLimitLayout(limit = '') {
+        const warningElement = DOM.create('div', 'modal', 'modal--toggle');
+        warningElement.insertHTML('afterbegin', `
+            <div class="modal__warning">
+                <h3>You can add only ${limit} todos to Progress desk</h3>
+
+                <button 
+                    class="warning-buttons__confirm"
+                    data-btn-confirm
+                >Confirm</button>
+            </div>
+        `);
+        Modal.#warningModal = warningElement;
+
+        warningElement.addEvent('click', (e) => {
+            const $el = e.target;
+
+            if ('btnConfirm' in $el.dataset) {
+                this.removeWarningLayout();
+            }
+        })
+
+        root.insertElement('afterend', warningElement);
+    }
+
+    static addNewTodoLayout(callback) {
+        const newTodoElement = DOM.create('div', 'modal', 'modal--toggle');
         const formNewTodo = DOM.create('form', 'modal__new-todo');
 
         formNewTodo.insertHTML('afterbegin', `
-            <h3 class="new-todo__header">${type === 'add' ? 'New Todo' : 'Edit Todo'}</h3>
+            <h3 class="new-todo__header">New Todo</h3>
+
             <input 
-                required
-                type="text" 
-                placeholder="title"
-                class="new-todo__title"
-                value="${todo ? todo.title : ''}"
+            type="text" 
+            class="new-todo__title" 
+            placeholder="Enter todo title"
+            required
             >
+
             <textarea 
-                required
-                rows="3" 
-                minlength="3"
-                maxlength="42" 
-                placeholder="todo description"
-                class="new-todo__description"
-            >${todo ? todo.desc : ''}</textarea>
+            minlength="3"
+            maxlength="50"
+            placeholder="Enter todo description"
+            class="new-todo__description"
+            required
+            ></textarea>
+
             <div class="new-todo__buttons">
-                <button 
-                    type="button" 
-                    class="new-todo__cancel" 
-                    data-btn-cancel-new-todo
-                >Cancel</button>
-                <button 
-                    type="submit" 
-                    class="new-todo__add" 
-                    data-btn-add-new-todo
-                >${type === 'add' ? 'Add Todo' : 'Edit Todo'}</button>
+                <button type="button" class="new-todo__cancel" data-btn-cancel>Cancel</button>
+                <button type="submit" class="new-todo__add" data-btn-add>Add</button>
             </div>
-        `);
+        `)
 
-        modalNewTodo.insertElement('afterbegin', formNewTodo);
-        root.insertElement('afterend', modalNewTodo);
-
-        Modal.#addTodoLayout = modalNewTodo;
-
-        const closeModal = () => {
-            if (Modal.#addTodoLayout) {
-                Modal.#addTodoLayout.remove();
-                Modal.#addTodoLayout = '';
-            }
-        }
-
-        modalNewTodo.addEvent('click', (e) => {
-            if ('btnCancelNewTodo' in e.target.dataset) {
-                closeModal();
+        formNewTodo.addEvent('click', (e) => {
+            if ('btnCancel' in e.target.dataset) {
+                this.removeNewTodoLayout();
             }
         })
 
         formNewTodo.addEvent('submit', (e) => {
             e.preventDefault();
-            const id = todo ? todo.id : Date.now();
+            const form = e.currentTarget;
+            const title = form.elements[0].value;
+            const desc = form.elements[1].value;
+            const date = getDate();
 
-            callback(e.target[0].value, e.target[1].value, id);
-            closeModal();
+            callback({ id: Date.now(), title, desc, date });
+            this.removeNewTodoLayout();
         })
+
+        newTodoElement.append(formNewTodo);
+
+        Modal.#newTodoLayout = newTodoElement;
+
+        root.insertElement('afterend', newTodoElement);
     }
 
-
-    static addWarningLayout(text = '', type = 'info', callback) {
-        const modalWarning = DOM.create('div', 'modal', 'modal--toggle');
-        modalWarning.insertHTML('afterbegin', `
-            <div class="modal__warning">
-                <h3>${text ? text : 'Warning'}</h3>
-                <div class="modal__warning-buttons">
-                    ${
-                        type !== 'info' 
-                            ? `<button 
-                                    type="button" 
-                                    data-btn-warning-cancel
-                                    class="warning-buttons__cancel"
-                                >Cancel</button>`
-                            : ''
-                    }
-                    <button 
-                        type="button" 
-                        data-btn-warning-confirm
-                        class="warning-buttons__confirm"
-                    >Confirm</button>
-                </div>
-            </div>
-        `);
-
-        root.insertElement('afterend', modalWarning);
-
-        Modal.#warningLayout = modalWarning;
-
-        const removeWarning = () => {
-            if (Modal.#warningLayout) {
-                Modal.#warningLayout.remove();
-                Modal.#warningLayout = '';
-            }
+    static removeNewTodoLayout() {
+        if (Modal.#newTodoLayout) {
+            Modal.#newTodoLayout.remove();
         }
+    }
 
-        modalWarning.addEvent('click', (e) => {
-            if ('btnWarningCancel' in e.target.dataset) {
-                removeWarning();
-                return;
-            }
-            if ('btnWarningConfirm' in e.target.dataset) {
-                removeWarning();
-                if (callback) callback();
+    static addEditTodoLayout(el, callback) {
+        const editTodoElement = DOM.create('div', 'modal', 'modal--toggle');
+        const formEditTodo = DOM.create('form', 'modal__new-todo');
+
+        formEditTodo.insertHTML('afterbegin', `
+            <h3 class="new-todo__header">Edit Todo</h3>
+
+            <input 
+            type="text" 
+            class="new-todo__title" 
+            placeholder="Enter todo title"
+            value="${el.title}"
+            required
+            >
+
+            <textarea 
+            minlength="3"
+            maxlength="50"
+            placeholder="Enter todo description"
+            class="new-todo__description"
+            required
+            >${el.desc}</textarea>
+
+            <div class="new-todo__buttons">
+                <button type="button" class="new-todo__cancel" data-btn-cancel>Cancel</button>
+                <button type="submit" class="new-todo__add" data-btn-edit>Edit</button>
+            </div>
+        `)
+
+        formEditTodo.addEvent('click', (e) => {
+            if ('btnCancel' in e.target.dataset) {
+                this.removeNewTodoLayout();
             }
         })
-    };
+
+        formEditTodo.addEvent('submit', (e) => {
+            e.preventDefault();
+            const form = e.currentTarget;
+            const title = form.elements[0].value;
+            const desc = form.elements[1].value;
+            const date = getDate();
+
+            callback({ id: el.id, title, desc, date });
+            this.removeNewTodoLayout();
+        })
+
+        editTodoElement.append(formEditTodo);
+
+        Modal.#newTodoLayout = editTodoElement;
+
+        root.insertElement('afterend', editTodoElement);
+    }
+
+    static addUsersListLayout(desksInstance) {
+        const list = DOM.create('div', 'modal', 'modal--toggle');
+        const usersForm = DOM.create('form', 'user-selection');
+        usersForm.insertHTML('afterbegin', `
+            <label for="user-select">Choose a user:</label>
+
+            <select name="users" id="user-select">
+                <option value="">--Please choose an option--</option>
+                <option value="1">Evgeniy Petrov</option>
+                <option value="2">Alex</option>
+                <option value="3">Guy Halvorson</option>
+            </select>
+        `)
+
+        usersForm.addEvent('change', (e) => {
+            const value = e.target.value.trim();
+            if (value) {
+                desksInstance.render(value);
+                this.removeUsersListLayout();
+            }
+        })
+
+        Modal.#usersForm = list;
+
+        list.append(usersForm);
+
+        root.insertElement('afterend', list);
+    }
+
+    static removeUsersListLayout() {
+        if (Modal.#usersForm) {
+            Modal.#usersForm.remove();
+        }
+    }
 }

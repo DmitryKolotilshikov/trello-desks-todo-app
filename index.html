@@ -10,7 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,700;1,300;1,400&display=swap"
         rel="stylesheet">
-    <title>todo desks</title>
+    <title>TRELLO</title>
     <link rel="stylesheet" href="styles/index.css">
     <script src="app/index.js" type="module" defer></script>
 </head>
@@ -19,7 +19,11 @@
     <div id="root">
 
         <header class="header">
-            <div class="header__logo">Todo Desks</div>
+            <div>
+                <div class="header__title" data-header-title>Todo Desks</div>
+                <div class="header__user" data-header-username></div>
+            </div>
+            <img alt="avatar" class="header__avatar" data-header_avatar>
             <div class="header__clock" data-header-clock></div>
         </header>
 
@@ -47,7 +51,6 @@
 
                         <div class="desc__todo-content" data-progress-desk-content>
                         </div>
-
                     </section>
 
                     <section class="desk">
@@ -66,7 +69,6 @@
         </main>
 
     </div>
-
 
     <template data-create-todo-template>
         <div class="todo" data-todo>

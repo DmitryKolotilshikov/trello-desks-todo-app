@@ -1,53 +1,47 @@
 import { Modal } from "./Modal.js";
-import { requestError } from "./constants.js";
 
 export class User {
-    #userID = 1;
-    #currentUser = {};
-    #todos = {};
-    
-    constructor(userID) {
-        this.#userID = userID;
+    #user = {};
+    #desks = {};
+    #userId;
+
+    constructor(userId) {
+        this.#userId = userId;
     }
 
     get userID() {
-        return this.#userID;
+        return this.#userId;
     }
 
-    get currentUser() {
-        return this.#currentUser;
-    }
-    set currentUser(user) {
-        this.#currentUser = user;
+    get user() {
+        return this.#user;
     }
 
-    get todos() {
-        return this.#todos;
-    }
-    set todos(newTodos) {
-        this.#todos = newTodos;
-    }
-
-    onChange(callback) {
-        if (callback) callback();
+    set user(user) {
+        if (typeof user !== 'undefined') {
+            this.#user = user;
+        }
     }
 
-    async fetcher(
-        cb, 
-        message = requestError, 
-        appendTodos, 
-        onChangeCallback
-        ) {
+    get desks() {
+        return this.#desks;
+    }
+
+    set desks(desks) {
+        if (typeof desks !== 'undefined') {
+            this.#desks = desks;
+        }
+    }
+
+    async fetcher(callback, appendDesks, message = '') {
         try {
-            this.currentUser = await cb();
-            this.todos = this.currentUser.todos;
-            appendTodos(this.currentUser);
-
-            if (onChangeCallback) {
-                this.onChange(onChangeCallback);
-            }
-        } catch (e) {
-            Modal.addError(`${message}: ${e.message}`);
+            const user = await callback();
+            this.user = user;
+            this.desks = user.desks;
+            this.#userId = user.id;
+            appendDesks();
+        } catch(e) {
+            Modal.addErrorLayout(`${message}: ${e.message}`);
         }
     }
 }
